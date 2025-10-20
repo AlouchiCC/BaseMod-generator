@@ -59,7 +59,7 @@ def create_mod_base(info):
     with open(reference_path, "w", encoding="utf-8") as f:
         f.write(generate_reference_class(info))
 
-    module_path = os.path.join(package_path, "IModule.jav$a")
+    module_path = os.path.join(package_path, "IModule.java")
     with open(module_path, "w", encoding="utf-8") as f:
         f.write(generate_module_class(info))
 
