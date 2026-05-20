@@ -226,72 +226,70 @@ public interface IModule {{
 def generate_bgradle_class(info):
     base_package = info['package']
 
-    return f"""
-
-buildscript {{
-    repositories {{
-        maven {{ url = 'https://maven.minecraftforge.net/' }}
+    return f"""buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
         mavenCentral()
-    }}
-    dependencies {{
+    }
+    dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
-    }}
-}}
+        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
+    }
+}
 
-plugins {{
-    id 'com.github.johnrengelman.shadow' version '4.0.4'
-}}
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
 
-repositories {{
-    maven {{ url = 'https://repo.spongepowered.org/maven' }}
+repositories {
+    maven { url = 'https://repo.spongepowered.org/maven' }
 
-    maven {{
+    maven {
         url "https://cursemaven.com"
-    }}
+    }
 
-    flatDir {{
+    flatDir {
         dir 'libs'
-    }}
-}}
+    }
+}
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'idea'
 
-tasks.withType(JavaCompile) {{
+tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
-}}
+}
 
 version = '1.0.0'
-group = '{base_package}'
+group = 'com.exode'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
-minecraft {{
+minecraft {
     mappings channel: 'stable', version: '39-1.12'
 
-    runs {{
-        client {{
+    runs {
+        client {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
-        }}
+        }
 
-        server {{
+        server {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
-        }}
-    }}
-}}
+        }
+    }
+}
 
-jar {{
+jar {
     duplicatesStrategy 'exclude'
-}}
+}
 
-dependencies {{
+dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
-    implementation ("net.minecraftforge:mergetool:0.2.3.3") {{ force = true }}
+    implementation ("net.minecraftforge:mergetool:0.2.3.3") { force = true }
     implementation fileTree(dir: 'libs', include: '*.jar')
 
     implementation 'org.json:json:20210307'
@@ -300,20 +298,20 @@ dependencies {{
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
-}}
+}
 
-configurations {{
+configurations {
     shadow
     compile.extendsFrom shadow
-    shadowMe {{ transitive = false }}
-}}
+    shadowMe { transitive = false }
+}
 
-tasks.processResources {{
+tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}}
+}
 
-shadowJar {{
-    classifier 'shadow'
+shadowJar {
+    archiveClassifier.set('shadow')
     project.configurations.shadow.setTransitive(true)
     duplicatesStrategy 'exclude'
     configurations = [project.configurations.shadow]
@@ -328,33 +326,33 @@ shadowJar {{
     relocate "okhttp3", "com.station4.repack.okhttp3"
     relocate "okhttp3", "com.station4.repack.okhttp3"
     relocate "org.slf4j", "com.station4.repack.org.slf4j"
-}}
+}
 
 build.dependsOn shadowJar
-reobf {{
-    shadowJar {{}}
-}}
+reobf {
+    shadowJar {}
+}
 
 jar.finalizedBy('reobfJar')
 
 /** Shit that idea needs to process resources ? **/
-idea {{
-    module {{
+idea {
+    module {
         inheritOutputDirs = true
-    }}
-}}
-subprojects {{
+    }
+}
+subprojects {
     apply plugin: 'idea'
-}}
-task prepareAssets(type: Copy) {{
+}
+task prepareAssets(type: Copy) {
     group = 'build'
     from project.file('src/main/resources')
     into project.file('build/classes/java/main')
-}}
+}
 
 classes.dependsOn(prepareAssets)
 
-sourceSets.main.resources {{ srcDir 'src/main/resources' }}
+sourceSets.main.resources { srcDir 'src/main/resources' }
 """
 
 def generate_reference_class(info):
@@ -362,7 +360,7 @@ def generate_reference_class(info):
     modid = info['modid']
     mod_name = info['mod_name']
 
-    return f"""package {base_package};
+    return f"""package {base_package}.main;;
 
 public class Reference {{
     public static final String MOD_ID = "{modid}";
